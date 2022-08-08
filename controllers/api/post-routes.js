@@ -4,7 +4,6 @@ const { Post, User, Comment, Vote } = require("../../models");
 
 // get all users
 router.get("/", (req, res) => {
-  console.log("======================");
   Post.findAll({
     attributes: [
       "id",
@@ -18,7 +17,6 @@ router.get("/", (req, res) => {
         "vote_count",
       ],
     ],
-    order: [["created_at", "DESC"]],
     include: [
       {
         model: Comment,
@@ -34,7 +32,10 @@ router.get("/", (req, res) => {
       },
     ],
   })
-    .then((dbPostData) => res.json(dbPostData))
+    .then((dbPostData) => {
+      // pass a single post object into the homepage template
+      res.render("homepage", dbPostData[0].get({ plain: true }));
+    })
     .catch((err) => {
       console.log(err);
       res.status(500).json(err);
